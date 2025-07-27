@@ -1,51 +1,179 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>ROBLOXXED - Recommended</title>
-  <style>
-    body { background-color: #001f3f; color: white; font-family: 'Segoe UI', sans-serif; text-align:center; padding: 20px; }
-    .game-container { display: flex; justify-content: center; gap: 20px; flex-wrap: nowrap; overflow-x: auto; }
-    .game { background-color: #003366; padding: 15px; border-radius: 10px; width: 280px; border: 2px solid #00aaff; }
-    img { width: 100%; border-radius: 5px; }
-    button { margin-top: 10px; background-color: #00aaff; border: none; border-radius: 5px; padding: 10px 20px; font-weight: bold; cursor: pointer; color: black; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ROBLOXXED - Recommended</title>
+<style>
+  body {
+    background-color: #001f3f;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  .logo {
+    max-width: 400px;
+    margin-bottom: 20px;
+  }
+  nav {
+    margin-bottom: 20px;
+  }
+  nav a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+  #searchBar {
+    padding: 10px;
+    width: 300px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 30px;
+  }
+  .games-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+    gap: 20px;
+    justify-items: center;
+  }
+  .game {
+    background-color: #003366;
+    border: 2px solid #00aaff;
+    border-radius: 10px;
+    padding: 15px;
+    width: 250px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  .game img {
+    width: 100%;
+    border-radius: 5px;
+  }
+  .game h2 {
+    margin: 10px 0 5px 0;
+    font-size: 1.2em;
+  }
+  .game p {
+    margin: 0 0 10px 0;
+    font-weight: bold;
+    color: #a0cfff;
+  }
+  .game button {
+    background-color: #00aaff;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
-  <h1>Recommended Games</h1>
-  <div id="recommendedGames" class="game-container">Loading...</div>
+  <img src="robloxxed_logo.png" alt="ROBLOXXED Logo" class="logo" />
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="recommended.html">Recommended</a>
+    <a href="charts.html">Charts</a>
+    <a href="others.html">Others</a>
+  </nav>
+
+  <input
+    type="text"
+    id="searchBar"
+    placeholder="Search games..."
+    onkeyup="filterGames()"
+  />
+
+  <div class="games-container" id="gameList">
+    Loading games...
+  </div>
 
   <script>
+    let allGames = [];
+
     async function fetchGames() {
-      const res = await fetch('games.json');
-      return res.json();
+      try {
+        const response = await fetch('games.json');
+        allGames = await response.json();
+      } catch (e) {
+        console.error('Failed to load games.json', e);
+        document.getElementById('gameList').innerHTML =
+          'Failed to load games.';
+      }
     }
 
-    function getRandomGames(games, count = 5) {
-      const shuffled = games.sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, count);
-    }
-
-    async function updateRecommended() {
-      const allGames = await fetchGames();
-      const randomGames = getRandomGames(allGames, 5);
-      const container = document.getElementById('recommendedGames');
+    function renderGames(games) {
+      const container = document.getElementById('gameList');
       container.innerHTML = '';
-      randomGames.forEach(game => {
-        const gameDiv = document.createElement('div');
-        gameDiv.className = 'game';
-        gameDiv.innerHTML = `
-          <img src="${game.thumbnail}" alt="${game.name}">
+
+      if (!games.length) {
+        container.innerHTML = '<p>No games found.</p>';
+        return;
+      }
+
+      games.forEach((game) => {
+        const div = document.createElement('div');
+        div.className = 'game';
+        div.innerHTML = `
+          <img src="${game.thumbnail}" alt="${game.name}" />
           <h2>${game.name}</h2>
           <p>By ${game.creator}</p>
           <button onclick="location.href='roblox://placeId=${game.id}'">Play</button>
         `;
-        container.appendChild(gameDiv);
+        container.appendChild(div);
       });
     }
 
-    // Update every second (1000ms)
-    setInterval(updateRecommended, 1000);
-    updateRecommended();
+    function filterGames() {
+      const query = document
+        .getElementById('searchBar')
+        .value.toLowerCase()
+        .trim();
+
+      if (!query) {
+        renderGames(allGames.slice(0, 20));
+        return;
+      }
+
+      const filtered = allGames.filter(
+        (game) =>
+          game.name.toLowerCase().includes(query) ||
+          game.creator.toLowerCase().includes(query)
+      );
+
+      renderGames(filtered);
+    }
+
+    function getRandomGames(count = 20) {
+      const shuffled = allGames
+        .slice()
+        .sort(() => Math.random() - 0.5)
+        .slice(0, count);
+      return shuffled;
+    }
+
+    async function updateRandomGames() {
+      if (!allGames.length) {
+        await fetchGames();
+      }
+      renderGames(getRandomGames(20));
+    }
+
+    // Update recommended games every second
+    setInterval(updateRandomGames, 1000);
+
+    // Initial load
+    window.onload = async () => {
+      await fetchGames();
+      updateRandomGames();
+    };
   </script>
 </body>
 </html>
