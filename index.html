@@ -80,22 +80,22 @@
       gameList.innerHTML = '<p>Loading games...</p>';
 
       try {
-        const response = await fetch('https://games.roblox.com/v1/games/list?sortOrder=Desc&limit=20');
+        // Using corsproxy.io to bypass CORS restrictions
+        const proxyUrl = 'https://corsproxy.io/?';
+        const apiUrl = 'https://games.roblox.com/v1/games/list?sortOrder=Desc&limit=20';
+        const response = await fetch(proxyUrl + apiUrl);
+
         if (!response.ok) throw new Error('Failed to fetch games');
         const data = await response.json();
 
-        gameList.innerHTML = ''; // clear loading text
+        gameList.innerHTML = ''; // clear loading message
 
         data.data.forEach(game => {
-          // Compose thumbnail URL
           const thumbnailUrl = `https://tr.rbxcdn.com/${game.universeId}/480/270/Image/Png`;
+          const creatorName = game.creator?.name || 'Unknown';
 
           const gameDiv = document.createElement('div');
           gameDiv.className = 'game';
-
-          // Include creator name safely (may be missing)
-          const creatorName = game.creator && game.creator.name ? game.creator.name : 'Unknown';
-
           gameDiv.innerHTML = `
             <img src="${thumbnailUrl}" class="thumbnail" alt="${game.name} thumbnail">
             <h2>${game.name}</h2>
@@ -120,7 +120,6 @@
       });
     }
 
-    // Load games on page load
     window.onload = loadGames;
   </script>
 </body>
