@@ -1,8 +1,8 @@
 const gameContainer = document.getElementById('gameList');
 const searchInput = document.getElementById('searchBar');
 
-// You can change this sortType per page: 1 = popular, 2 = top played, 3 = top earning, 4 = up & coming
-const SORT_TYPE = 1; // or set dynamically via query string
+const urlParams = new URLSearchParams(window.location.search);
+const SORT_TYPE = parseInt(urlParams.get('sortType')) || 1; // Default to Trending
 
 async function fetchGames(sortType = SORT_TYPE) {
   try {
@@ -14,7 +14,6 @@ async function fetchGames(sortType = SORT_TYPE) {
       return;
     }
 
-    // Clear existing
     gameContainer.innerHTML = '';
 
     data.games.forEach(game => {
@@ -49,5 +48,5 @@ function searchGames() {
 
 searchInput?.addEventListener('input', searchGames);
 
-// Run on load
+// Load games on page load
 fetchGames();
