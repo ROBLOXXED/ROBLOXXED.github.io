@@ -101,11 +101,13 @@
     async function fetchGames() {
       try {
         const response = await fetch('games.json');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         allGames = await response.json();
+        console.log('Loaded games:', allGames);
       } catch (e) {
         console.error('Failed to load games.json', e);
         document.getElementById('gameList').innerHTML =
-          'Failed to load games.';
+          '<p style="color: #f88;">Failed to load games.</p>';
       }
     }
 
@@ -136,6 +138,12 @@
         .getElementById('searchBar')
         .value.toLowerCase()
         .trim();
+
+      if (!allGames.length) {
+        // No games loaded yet, do nothing or show loading
+        document.getElementById('gameList').innerHTML = 'Loading games...';
+        return;
+      }
 
       if (!query) {
         renderGames(allGames.slice(0, 20));
