@@ -1,9 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <title>ROBLOXXED - Home</title>
-  
   <style>
     body {
       background-color: #001f3f;
@@ -21,6 +19,14 @@
     .logo {
       max-width: 400px;
       margin-bottom: 20px;
+    }
+    #searchBar {
+      padding: 10px;
+      width: 300px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border: none;
+      font-size: 16px;
     }
     .games-container {
       display: flex;
@@ -53,7 +59,6 @@
       margin-top: 10px;
     }
   </style>
-
 </head>
 <body>
   <img src="robloxxed_logo.png" alt="ROBLOXXED Logo" class="logo">
@@ -63,43 +68,33 @@
     <a href="charts.html">Charts</a>
     <a href="others.html">Others</a>
   </nav>
-  <div class="games-container">
-    
-    <div class="game">
-      <img src="https://tr.rbxcdn.com/1fbd9d213b40d44d79d9b27529f263b3/480/270/Image/Png" class="thumbnail" alt="Thumbnail">
-      <h2>Brookhaven 🏡RP</h2>
-      <p>By Wolfpaq</p>
-      <button onclick="location.href='roblox://placeId=4924922222'">Play</button>
-    </div>
-    
-    <div class="game">
-      <img src="https://tr.rbxcdn.com/e1557d5376477f37fb4c7a4cf6d9e4c4/480/270/Image/Png" class="thumbnail" alt="Thumbnail">
-      <h2>Blox Fruits 🍩</h2>
-      <p>By Gamer Robot Inc</p>
-      <button onclick="location.href='roblox://placeId=2753915549'">Play</button>
-    </div>
-    
-    <div class="game">
-      <img src="https://tr.rbxcdn.com/850f9b3b83ea7d2a6b3dc07e8cf21b59/480/270/Image/Png" class="thumbnail" alt="Thumbnail">
-      <h2>DOORS 🚪</h2>
-      <p>By LSPLASH</p>
-      <button onclick="location.href='roblox://placeId=6516141723'">Play</button>
-    </div>
-    
-    <div class="game">
-      <img src="https://tr.rbxcdn.com/0dcf765de637ab2a71fdb38b79b8c07e/480/270/Image/Png" class="thumbnail" alt="Thumbnail">
-      <h2>Pet Simulator 99 🐾</h2>
-      <p>By BIG Games Pets</p>
-      <button onclick="location.href='roblox://placeId=8737899170'">Play</button>
-    </div>
-    
-    <div class="game">
-      <img src="https://tr.rbxcdn.com/8b17e02700b5565f8f15890a66fd9e26/480/270/Image/Png" class="thumbnail" alt="Thumbnail">
-      <h2>Arsenal 🔫</h2>
-      <p>By ROLVe Community</p>
-      <button onclick="location.href='roblox://placeId=286090429'">Play</button>
-    </div>
-    
+
+  <input type="text" id="searchBar" onkeyup="searchGames()" placeholder="Search games...">
+
+  <div class="games-container" id="gameList">
+    <!-- GAMES START -->
+    <div class="game"><img src="https://tr.rbxcdn.com/1fbd9d213b40d44d79d9b27529f263b3/480/270/Image/Png" class="thumbnail"><h2>Brookhaven 🏡RP</h2><p>By Wolfpaq</p><button onclick="location.href='roblox://placeId=4924922222'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/e1557d5376477f37fb4c7a4cf6d9e4c4/480/270/Image/Png" class="thumbnail"><h2>Blox Fruits 🍩</h2><p>By Gamer Robot Inc</p><button onclick="location.href='roblox://placeId=2753915549'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/850f9b3b83ea7d2a6b3dc07e8cf21b59/480/270/Image/Png" class="thumbnail"><h2>DOORS 🚪</h2><p>By LSPLASH</p><button onclick="location.href='roblox://placeId=6516141723'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/0dcf765de637ab2a71fdb38b79b8c07e/480/270/Image/Png" class="thumbnail"><h2>Pet Simulator 99 🐾</h2><p>By BIG Games Pets</p><button onclick="location.href='roblox://placeId=8737899170'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/8b17e02700b5565f8f15890a66fd9e26/480/270/Image/Png" class="thumbnail"><h2>Arsenal 🔫</h2><p>By ROLVe Community</p><button onclick="location.href='roblox://placeId=286090429'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/f56fd14602a407570d0a376d569f3c43/480/270/Image/Png" class="thumbnail"><h2>Adopt Me!</h2><p>By DreamCraft</p><button onclick="location.href='roblox://placeId=920587237'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/f3a9d6cf94f6e3277f8691214e6e0193/480/270/Image/Png" class="thumbnail"><h2>Murder Mystery 2</h2><p>By Nikilis</p><button onclick="location.href='roblox://placeId=142823291'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/77c2d3a09e2b729d3c735c47cf53d8fa/480/270/Image/Png" class="thumbnail"><h2>Shindo Life</h2><p>By RELL World</p><button onclick="location.href='roblox://placeId=4616652839'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/0f54cb06489a3b2bb18ef7e7d5272d95/480/270/Image/Png" class="thumbnail"><h2>Tower of Hell</h2><p>By YXCeptional Studios</p><button onclick="location.href='roblox://placeId=1962086868'">Play</button></div>
+    <div class="game"><img src="https://tr.rbxcdn.com/8756f4ad6c5041dd52933a35f6e6a08a/480/270/Image/Png" class="thumbnail"><h2>Build A Boat For Treasure</h2><p>By Chillz Studios</p><button onclick="location.href='roblox://placeId=537413528'">Play</button></div>
+    <!-- GAMES END -->
   </div>
+
+  <script>
+    function searchGames() {
+      const input = document.getElementById('searchBar').value.toLowerCase();
+      const games = document.querySelectorAll('.game');
+      games.forEach(game => {
+        const text = game.textContent.toLowerCase();
+        game.style.display = text.includes(input) ? 'block' : 'none';
+      });
+    }
+  </script>
 </body>
 </html>
