@@ -6,8 +6,8 @@
 <title>ROBLOXXED - Recommended</title>
 <style>
   body {
-    background-color: #ffffff; /* white background */
-    color: #003366; /* dark blue text */
+    background-color: #ffffff;
+    color: #003366;
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
     padding: 20px;
@@ -21,7 +21,7 @@
     margin-bottom: 20px;
   }
   nav a {
-    color: #004080; /* medium blue links */
+    color: #004080;
     text-decoration: none;
     margin: 0 15px;
     font-weight: bold;
@@ -35,9 +35,22 @@
     width: 300px;
     font-size: 16px;
     border-radius: 5px;
-    border: 2px solid #0066cc; /* blue border */
-    margin-bottom: 30px;
+    border: 2px solid #0066cc;
+    margin-bottom: 15px;
     color: #003366;
+  }
+  #refreshBtn {
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 30px;
+  }
+  #refreshBtn:hover {
+    background-color: #005bb5;
   }
   .games-container {
     display: grid;
@@ -46,14 +59,14 @@
     justify-items: center;
   }
   .game {
-    background-color: #e6f0ff; /* very light blue background */
-    border: 2px solid #0073e6; /* bright blue border */
+    background-color: #e6f0ff;
+    border: 2px solid #0073e6;
     border-radius: 10px;
     padding: 15px;
     width: 250px;
     box-sizing: border-box;
     text-align: center;
-    color: #003366; /* dark blue text */
+    color: #003366;
   }
   .game img {
     width: 100%;
@@ -67,10 +80,10 @@
   .game p {
     margin: 0 0 10px 0;
     font-weight: bold;
-    color: #0059b3; /* medium blue text */
+    color: #0059b3;
   }
   .game button {
-    background-color: #0073e6; /* bright blue */
+    background-color: #0073e6;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -80,7 +93,7 @@
     transition: background-color 0.3s ease;
   }
   .game button:hover {
-    background-color: #005bb5; /* darker blue on hover */
+    background-color: #005bb5;
   }
   p.no-games {
     color: #004080;
@@ -105,24 +118,70 @@
     placeholder="Search games..."
     onkeyup="filterGames()"
   />
+  <br />
+  <button id="refreshBtn" onclick="generateAndStoreGames()">Refresh Games</button>
 
   <div class="games-container" id="gameList">
     Loading games...
   </div>
 
   <script>
+    const GAME_COUNT = 1000;
+    const STORAGE_KEY = 'robloxxed_games';
+
+    const nameKeywords = [
+      "Adventure", "Simulator", "Tycoon", "Escape", "Quest", "Battle", "Island",
+      "City", "Tower", "Run", "Fight", "Survival", "Parkour", "Race", "Defense",
+      "Story", "World", "Craft", "Hero", "Magic", "Zoo", "Build", "Maze", "Kingdom"
+    ];
+
+    const thumbnailUrls = [
+      "https://tr.rbxcdn.com/1fbd9d213b40d44d79d9b27529f263b3/480/270/Image/Png",
+      "https://tr.rbxcdn.com/e1557d5376477f37fb4c7a4cf6d9e4c4/480/270/Image/Png",
+      "https://tr.rbxcdn.com/850f9b3b83ea7d2a6b3dc07e8cf21b59/480/270/Image/Png",
+      "https://tr.rbxcdn.com/0dcf765de637ab2a71fdb38b79b8c07e/480/270/Image/Png",
+      "https://tr.rbxcdn.com/8b17e02700b5565f8f15890a66fd9e26/480/270/Image/Png",
+    ];
+
     let allGames = [];
 
-    async function fetchGames() {
+    function randomGameName() {
+      const count = Math.floor(Math.random() * 3) + 1;
+      const parts = [];
+      for (let i = 0; i < count; i++) {
+        const word = nameKeywords[Math.floor(Math.random() * nameKeywords.length)];
+        parts.push(word);
+      }
+      // Make unique and capitalize first letter of each word
+      return [...new Set(parts)]
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    }
+
+    function generateGames() {
+      const games = [];
+      for (let i = 0; i < GAME_COUNT; i++) {
+        games.push({
+          id: 1000000000 + i,
+          name: randomGameName(),
+          creator: `User${Math.floor(1000 + Math.random() * 9000)}`,
+          thumbnail: thumbnailUrls[Math.floor(Math.random() * thumbnailUrls.length)]
+        });
+      }
+      return games;
+    }
+
+    function saveGamesToStorage(games) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
+    }
+
+    function loadGamesFromStorage() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (!data) return null;
       try {
-        const response = await fetch('games.json');
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        allGames = await response.json();
-        console.log('Loaded games:', allGames);
-      } catch (e) {
-        console.error('Failed to load games.json', e);
-        document.getElementById('gameList').innerHTML =
-          '<p class="no-games">Failed to load games.</p>';
+        return JSON.parse(data);
+      } catch {
+        return null;
       }
     }
 
@@ -135,7 +194,7 @@
         return;
       }
 
-      games.forEach((game) => {
+      games.forEach(game => {
         const div = document.createElement('div');
         div.className = 'game';
         div.innerHTML = `
@@ -149,13 +208,9 @@
     }
 
     function filterGames() {
-      const query = document
-        .getElementById('searchBar')
-        .value.toLowerCase()
-        .trim();
+      const query = document.getElementById('searchBar').value.toLowerCase().trim();
 
       if (!allGames.length) {
-        // No games loaded yet, do nothing or show loading
         document.getElementById('gameList').innerHTML = 'Loading games...';
         return;
       }
@@ -165,37 +220,29 @@
         return;
       }
 
-      const filtered = allGames.filter(
-        (game) =>
-          game.name.toLowerCase().includes(query) ||
-          game.creator.toLowerCase().includes(query)
+      const filtered = allGames.filter(game =>
+        game.name.toLowerCase().includes(query) ||
+        game.creator.toLowerCase().includes(query)
       );
 
       renderGames(filtered);
     }
 
-    function getRandomGames(count = 20) {
-      const shuffled = allGames
-        .slice()
-        .sort(() => Math.random() - 0.5)
-        .slice(0, count);
-      return shuffled;
+    function generateAndStoreGames() {
+      allGames = generateGames();
+      saveGamesToStorage(allGames);
+      filterGames();
     }
 
-    async function updateRandomGames() {
-      if (!allGames.length) {
-        await fetchGames();
+    // On load, try load from storage, else generate
+    window.onload = () => {
+      const storedGames = loadGamesFromStorage();
+      if (storedGames && storedGames.length === GAME_COUNT) {
+        allGames = storedGames;
+        filterGames();
+      } else {
+        generateAndStoreGames();
       }
-      renderGames(getRandomGames(20));
-    }
-
-    // Update recommended games every second
-    setInterval(updateRandomGames, 1000);
-
-    // Initial load
-    window.onload = async () => {
-      await fetchGames();
-      updateRandomGames();
     };
   </script>
 </body>
