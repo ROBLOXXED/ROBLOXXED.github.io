@@ -1,86 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ROBLOXXED - Home</title>
+  <title>ROBLOXXED - Recommended</title>
   <style>
-    body {
-      background-color: #001f3f;
-      color: #ffffff;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    nav a {
-      color: #ffffff;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .logo {
-      max-width: 400px;
-      margin-bottom: 20px;
-    }
-    #searchBar {
-      padding: 10px;
-      width: 300px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      border: none;
-      font-size: 16px;
-    }
-    .games-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 20px;
-      justify-items: center;
-    }
-    .game {
-      border: 2px solid #00aaff;
-      padding: 15px;
-      border-radius: 10px;
-      width: 250px;
-      background-color: #003366;
-    }
-    .thumbnail {
-      width: 100%;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #00aaff;
-      color: black;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    body { background-color: #001f3f; color: white; font-family: 'Segoe UI', sans-serif; text-align:center; padding: 20px; }
+    .game-container { display: flex; justify-content: center; gap: 20px; flex-wrap: nowrap; overflow-x: auto; }
+    .game { background-color: #003366; padding: 15px; border-radius: 10px; width: 280px; border: 2px solid #00aaff; }
+    img { width: 100%; border-radius: 5px; }
+    button { margin-top: 10px; background-color: #00aaff; border: none; border-radius: 5px; padding: 10px 20px; font-weight: bold; cursor: pointer; color: black; }
   </style>
 </head>
 <body>
-  <img src="robloxxed_logo.png" alt="ROBLOXXED Logo" class="logo">
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="recommended.html">Recommended</a>
-    <a href="charts.html">Charts</a>
-    <a href="others.html">Others</a>
-  </nav>
+  <h1>Recommended Games</h1>
+  <div id="recommendedGames" class="game-container">Loading...</div>
 
-  <input type="text" id="searchBar" onkeyup="searchGames()" placeholder="Search games...">
-
-  <div class="games-container" id="gameList">Loading games...</div>
-
-  <script src="games.js"></script>
   <script>
-    function searchGames() {
-      const input = document.getElementById('searchBar').value.toLowerCase();
-      const games = document.querySelectorAll('.game');
-      games.forEach(game => {
-        const text = game.textContent.toLowerCase();
-        game.style.display = text.includes(input) ? 'block' : 'none';
+    async function fetchGames() {
+      const res = await fetch('games.json');
+      return res.json();
+    }
+
+    function getRandomGames(games, count = 5) {
+      const shuffled = games.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+    }
+
+    async function updateRecommended() {
+      const allGames = await fetchGames();
+      const randomGames = getRandomGames(allGames, 5);
+      const container = document.getElementById('recommendedGames');
+      container.innerHTML = '';
+      randomGames.forEach(game => {
+        const gameDiv = document.createElement('div');
+        gameDiv.className = 'game';
+        gameDiv.innerHTML = `
+          <img src="${game.thumbnail}" alt="${game.name}">
+          <h2>${game.name}</h2>
+          <p>By ${game.creator}</p>
+          <button onclick="location.href='roblox://placeId=${game.id}'">Play</button>
+        `;
+        container.appendChild(gameDiv);
       });
     }
+
+    // Update every second (1000ms)
+    setInterval(updateRecommended, 1000);
+    updateRecommended();
   </script>
 </body>
 </html>
