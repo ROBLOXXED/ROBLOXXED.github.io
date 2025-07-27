@@ -6,7 +6,8 @@
 <title>ROBLOXXED - Recommended</title>
 <style>
   body {
-    background-color: #ffffff;
+    background: url('https://static.vecteezy.com/system/resources/previews/022/514/324/non_2x/white-gradient-abstract-curve-pattern-free-photo.jpeg') no-repeat center center fixed;
+    background-size: cover;
     color: #003366;
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
@@ -126,7 +127,7 @@
   </div>
 
 <script>
-  const GAME_COUNT = 1000;
+  const GAME_COUNT = 100000; // 100k games in memory
   const STORAGE_KEY = 'robloxxed_games';
 
   const nameKeywords = [
@@ -137,7 +138,6 @@
 
   let allGames = [];
 
-  // Generate random game names
   function randomGameName() {
     const count = Math.floor(Math.random() * 3) + 1;
     const parts = [];
@@ -150,7 +150,6 @@
       .join(' ');
   }
 
-  // Generate games with placeholder thumbnails first
   function generateGames() {
     const placeholderThumbnail = "https://via.placeholder.com/150x150.png?text=Loading...";
     const games = [];
@@ -165,9 +164,13 @@
     return games;
   }
 
-  // Save/load games from localStorage
   function saveGamesToStorage(games) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
+    } catch(e) {
+      console.warn('LocalStorage quota exceeded or error saving data', e);
+      // If storage fails, ignore and continue with runtime only
+    }
   }
 
   function loadGamesFromStorage() {
@@ -180,7 +183,6 @@
     }
   }
 
-  // Render games to the page
   function renderGames(games) {
     const container = document.getElementById('gameList');
     container.innerHTML = '';
@@ -204,7 +206,6 @@
     });
   }
 
-  // Filter games by search
   function filterGames() {
     const query = document.getElementById('searchBar').value.toLowerCase().trim();
 
@@ -214,7 +215,7 @@
     }
 
     if (!query) {
-      renderGames(allGames.slice(0, 20));
+      renderGames(allGames.slice(0, 50));
       return;
     }
 
@@ -223,52 +224,20 @@
       game.creator.toLowerCase().includes(query)
     );
 
-    renderGames(filtered);
-  }
-
-  // Fetch real thumbnails from Roblox API in chunks of 100
-  async function fetchRealThumbnails(games) {
-    const chunkSize = 100;
-    for (let i = 0; i < games.length; i += chunkSize) {
-      const chunk = games.slice(i, i + chunkSize);
-      const ids = chunk.map(g => g.id).join(',');
-      try {
-        const res = await fetch(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${ids}&size=150x150&format=Png&isCircular=false`);
-        const data = await res.json();
-        if (data && data.data) {
-          data.data.forEach(iconData => {
-            const game = games.find(g => g.id == iconData.universeId);
-            if (game && iconData.imageUrl) {
-              game.thumbnail = iconData.imageUrl;
-              // Update thumbnail img src immediately for visible games
-              const gameDiv = document.getElementById('game-' + game.id);
-              if (gameDiv) {
-                const img = gameDiv.querySelector('img');
-                if (img) img.src = iconData.imageUrl;
-              }
-            }
-          });
-        }
-      } catch (e) {
-        console.error('Failed to fetch thumbnails:', e);
-      }
-    }
+    renderGames(filtered.slice(0, 50));
   }
 
   async function generateAndStoreGames() {
     allGames = generateGames();
     saveGamesToStorage(allGames);
-    renderGames(allGames.slice(0, 20));
-    await fetchRealThumbnails(allGames);
+    renderGames(allGames.slice(0, 50));
   }
 
   window.onload = async () => {
     const storedGames = loadGamesFromStorage();
     if (storedGames && storedGames.length === GAME_COUNT) {
       allGames = storedGames;
-      renderGames(allGames.slice(0, 20));
-      // Fetch real thumbnails in background and update
-      await fetchRealThumbnails(allGames);
+      renderGames(allGames.slice(0, 50));
     } else {
       await generateAndStoreGames();
     }
