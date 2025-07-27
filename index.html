@@ -136,6 +136,19 @@
     "Story", "World", "Craft", "Hero", "Magic", "Zoo", "Build", "Maze", "Kingdom"
   ];
 
+  // More realistic Roblox-style username parts
+  const usernamePrefixes = [
+    "Xx", "Dark", "Light", "Shadow", "Super", "Mega", "Epic", "Ultra",
+    "Crazy", "Cool", "Silent", "Fast", "Ninja", "Dragon", "Fire", "Ice"
+  ];
+  const usernameRoots = [
+    "Gamer", "Builder", "Player", "Ninja", "Warrior", "Master", "Hero",
+    "Knight", "Hunter", "Rider", "Wizard", "King", "Queen", "Slayer"
+  ];
+  const usernameSuffixes = [
+    "123", "007", "XYZ", "Pro", "X", "99", "One", "Master", "Legend"
+  ];
+
   let allGames = [];
 
   function randomGameName() {
@@ -150,6 +163,20 @@
       .join(' ');
   }
 
+  function randomUsername() {
+    const prefix = usernamePrefixes[Math.floor(Math.random() * usernamePrefixes.length)];
+    const root = usernameRoots[Math.floor(Math.random() * usernameRoots.length)];
+    const suffix = usernameSuffixes[Math.floor(Math.random() * usernameSuffixes.length)];
+
+    const pattern = Math.floor(Math.random() * 3);
+    switch(pattern) {
+      case 0: return prefix + root + suffix;
+      case 1: return root + suffix;
+      case 2: return prefix + root;
+      default: return root;
+    }
+  }
+
   function generateGames() {
     const placeholderThumbnail = "https://via.placeholder.com/150x150.png?text=Loading...";
     const games = [];
@@ -157,7 +184,7 @@
       games.push({
         id: 1000000000 + i,
         name: randomGameName(),
-        creator: `User${Math.floor(1000 + Math.random() * 9000)}`,
+        creator: randomUsername(),
         thumbnail: placeholderThumbnail
       });
     }
@@ -169,7 +196,6 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
     } catch(e) {
       console.warn('LocalStorage quota exceeded or error saving data', e);
-      // If storage fails, ignore and continue with runtime only
     }
   }
 
