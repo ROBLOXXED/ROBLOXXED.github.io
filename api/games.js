@@ -1,52 +1,17 @@
-const gameContainer = document.getElementById('gameList');
-const searchInput = document.getElementById('searchBar');
+export default async function handler(req, res) {
+  const sortType = req.query.sortType || '1'; // 1 = Most Engaging
+  const limit = 10;
 
-const urlParams = new URLSearchParams(window.location.search);
-const SORT_TYPE = parseInt(urlParams.get('sortType')) || 1; // Default to Trending
-
-async function fetchGames(sortType = SORT_TYPE) {
   try {
-    const response = await fetch(`https://games.roblox.com/v1/games/list?sortToken=&startRows=0&maxRows=25&sortType=${sortType}`);
-    const data = await response.json();
-
-    if (!data.games || data.games.length === 0) {
-      gameContainer.innerHTML = "<p>No games found.</p>";
-      return;
-    }
-
-    gameContainer.innerHTML = '';
-
-    data.games.forEach(game => {
-      const gameCard = document.createElement('div');
-      gameCard.className = 'game';
-
-      const thumbnail = game.thumbnailUrl || `https://www.roblox.com/asset-thumbnail/image?assetId=${game.placeId}&width=480&height=270&format=png`;
-
-      gameCard.innerHTML = `
-        <img src="${thumbnail}" class="thumbnail" alt="${game.name}">
-        <h2>${game.name}</h2>
-        <p>By ${game.creatorName || 'Unknown'}</p>
-        <button onclick="location.href='roblox://placeId=${game.placeId}'">Play</button>
-      `;
-
-      gameContainer.appendChild(gameCard);
+    const response = await fetch(`https://games.roblox.com/v1/games/list?startRows=0&maxRows=${limit}&sortType=${sortType}`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
+
+    const data = await response.json();
+    res.status(200).json(data);
   } catch (err) {
-    console.error('Failed to load games:', err);
-    gameContainer.innerHTML = "<p>Failed to load games. Please try again later.</p>";
+    res.status(500).json({ error: 'Failed to fetch Roblox games' });
   }
 }
-
-function searchGames() {
-  const input = searchInput.value.toLowerCase();
-  const games = document.querySelectorAll('.game');
-  games.forEach(game => {
-    const text = game.textContent.toLowerCase();
-    game.style.display = text.includes(input) ? 'block' : 'none';
-  });
-}
-
-searchInput?.addEventListener('input', searchGames);
-
-// Load games on page load
-fetchGames();
