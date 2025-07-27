@@ -1,9 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <title>ROBLOXXED - Charts</title>
-  
   <style>
     body {
       background-color: #001f3f;
@@ -22,21 +20,26 @@
       max-width: 400px;
       margin-bottom: 20px;
     }
+    #searchBar {
+      padding: 10px;
+      width: 300px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border: none;
+      font-size: 16px;
+    }
     .games-container {
       display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
-      padding: 10px;
-      justify-content: start;
     }
     .game {
       border: 2px solid #00aaff;
       padding: 15px;
       border-radius: 10px;
-      width: 300px;
+      width: 280px;
       background-color: #003366;
-      flex-shrink: 0;
     }
     .thumbnail {
       width: 100%;
@@ -53,17 +56,22 @@
       margin-top: 10px;
     }
   </style>
-
 </head>
 <body>
   <img src="robloxxed_logo.png" alt="ROBLOXXED Logo" class="logo">
   <nav>
     <a href="index.html">Home</a>
-    <a href="recommended.html">Recommended</a>
-    <a href="charts.html">Charts</a>
-    <a href="others.html">Others</a>
+    <a href="charts.html?sortType=2">Most Played</a>
+    <a href="charts.html?sortType=3">Top Earning</a>
+    <a href="charts.html?sortType=4">Up & Coming</a>
   </nav>
-  <h1>Charts</h1>
-  <p>Coming soon: Charts games...</p>
+
+  <input type="text" id="searchBar" placeholder="Search games...">
+
+  <div class="games-container" id="gameList">
+    <p>Loading games...</p>
+  </div>
+
+  <script src="games.js" defer></script>
 </body>
 </html>
