@@ -3,75 +3,41 @@
 <head>
   <title>ROBLOXXED - Charts</title>
   <style>
-    body {
-      background-color: #001f3f;
-      color: #ffffff;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    nav a {
-      color: #ffffff;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .logo {
-      max-width: 400px;
-      margin-bottom: 20px;
-    }
-    #searchBar {
-      padding: 10px;
-      width: 300px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      border: none;
-      font-size: 16px;
-    }
-    .games-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-    .game {
-      border: 2px solid #00aaff;
-      padding: 15px;
-      border-radius: 10px;
-      width: 280px;
-      background-color: #003366;
-    }
-    .thumbnail {
-      width: 100%;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #00aaff;
-      color: black;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    body { background-color: #001f3f; color: white; font-family: 'Segoe UI', sans-serif; text-align:center; padding: 20px; }
+    .game-container { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 20px; justify-items: center; }
+    .game { background-color: #003366; padding: 15px; border-radius: 10px; border: 2px solid #00aaff; width: 280px; }
+    img { width: 100%; border-radius: 5px; }
+    button { margin-top: 10px; background-color: #00aaff; border: none; border-radius: 5px; padding: 10px 20px; font-weight: bold; cursor: pointer; color: black; }
   </style>
 </head>
 <body>
-  <img src="robloxxed_logo.png" alt="ROBLOXXED Logo" class="logo">
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="charts.html?sortType=2">Most Played</a>
-    <a href="charts.html?sortType=3">Top Earning</a>
-    <a href="charts.html?sortType=4">Up & Coming</a>
-  </nav>
+  <h1>Popular Games</h1>
+  <div id="chartsGames" class="game-container">Loading...</div>
 
-  <input type="text" id="searchBar" placeholder="Search games...">
+  <script>
+    async function fetchGames() {
+      const res = await fetch('games.json');
+      return res.json();
+    }
 
-  <div class="games-container" id="gameList">
-    <p>Loading games...</p>
-  </div>
+    async function loadCharts() {
+      const allGames = await fetchGames();
+      const container = document.getElementById('chartsGames');
+      container.innerHTML = '';
+      allGames.forEach(game => {
+        const gameDiv = document.createElement('div');
+        gameDiv.className = 'game';
+        gameDiv.innerHTML = `
+          <img src="${game.thumbnail}" alt="${game.name}">
+          <h2>${game.name}</h2>
+          <p>By ${game.creator}</p>
+          <button onclick="location.href='roblox://placeId=${game.id}'">Play</button>
+        `;
+        container.appendChild(gameDiv);
+      });
+    }
 
-  <script src="games.js" defer></script>
+    loadCharts();
+  </script>
 </body>
 </html>
