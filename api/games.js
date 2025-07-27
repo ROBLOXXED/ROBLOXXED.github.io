@@ -1,36 +1,53 @@
-export default function handler(req, res) {
-  res.status(200).json({
-    games: [
-      {
-        id: 4924922222,
-        name: "Brookhaven 🏡RP",
-        creatorName: "Wolfpaq",
-        thumbnailUrl: "https://tr.rbxcdn.com/1fbd9d213b40d44d79d9b27529f263b3/480/270/Image/Png"
-      },
-      {
-        id: 2753915549,
-        name: "Blox Fruits 🍩",
-        creatorName: "Gamer Robot Inc",
-        thumbnailUrl: "https://tr.rbxcdn.com/e1557d5376477f37fb4c7a4cf6d9e4c4/480/270/Image/Png"
-      },
-      {
-        id: 6516141723,
-        name: "DOORS 🚪",
-        creatorName: "LSPLASH",
-        thumbnailUrl: "https://tr.rbxcdn.com/850f9b3b83ea7d2a6b3dc07e8cf21b59/480/270/Image/Png"
-      },
-      {
-        id: 8737899170,
-        name: "Pet Simulator 99 🐾",
-        creatorName: "BIG Games Pets",
-        thumbnailUrl: "https://tr.rbxcdn.com/0dcf765de637ab2a71fdb38b79b8c07e/480/270/Image/Png"
-      },
-      {
-        id: 286090429,
-        name: "Arsenal 🔫",
-        creatorName: "ROLVe Community",
-        thumbnailUrl: "https://tr.rbxcdn.com/8b17e02700b5565f8f15890a66fd9e26/480/270/Image/Png"
-      }
-    ]
+const gameContainer = document.getElementById('gameList');
+const searchInput = document.getElementById('searchBar');
+
+// You can change this sortType per page: 1 = popular, 2 = top played, 3 = top earning, 4 = up & coming
+const SORT_TYPE = 1; // or set dynamically via query string
+
+async function fetchGames(sortType = SORT_TYPE) {
+  try {
+    const response = await fetch(`https://games.roblox.com/v1/games/list?sortToken=&startRows=0&maxRows=25&sortType=${sortType}`);
+    const data = await response.json();
+
+    if (!data.games || data.games.length === 0) {
+      gameContainer.innerHTML = "<p>No games found.</p>";
+      return;
+    }
+
+    // Clear existing
+    gameContainer.innerHTML = '';
+
+    data.games.forEach(game => {
+      const gameCard = document.createElement('div');
+      gameCard.className = 'game';
+
+      const thumbnail = game.thumbnailUrl || `https://www.roblox.com/asset-thumbnail/image?assetId=${game.placeId}&width=480&height=270&format=png`;
+
+      gameCard.innerHTML = `
+        <img src="${thumbnail}" class="thumbnail" alt="${game.name}">
+        <h2>${game.name}</h2>
+        <p>By ${game.creatorName || 'Unknown'}</p>
+        <button onclick="location.href='roblox://placeId=${game.placeId}'">Play</button>
+      `;
+
+      gameContainer.appendChild(gameCard);
+    });
+  } catch (err) {
+    console.error('Failed to load games:', err);
+    gameContainer.innerHTML = "<p>Failed to load games. Please try again later.</p>";
+  }
+}
+
+function searchGames() {
+  const input = searchInput.value.toLowerCase();
+  const games = document.querySelectorAll('.game');
+  games.forEach(game => {
+    const text = game.textContent.toLowerCase();
+    game.style.display = text.includes(input) ? 'block' : 'none';
   });
 }
+
+searchInput?.addEventListener('input', searchGames);
+
+// Run on load
+fetchGames();
