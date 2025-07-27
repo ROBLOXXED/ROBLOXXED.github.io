@@ -6,8 +6,8 @@
 <title>ROBLOXXED - Recommended</title>
 <style>
   body {
-    background-color: #001f3f;
-    color: #ffffff;
+    background-color: #ffffff; /* white background */
+    color: #003366; /* dark blue text */
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
     padding: 20px;
@@ -21,19 +21,23 @@
     margin-bottom: 20px;
   }
   nav a {
-    color: #ffffff;
+    color: #004080; /* medium blue links */
     text-decoration: none;
     margin: 0 15px;
     font-weight: bold;
     font-size: 1.1em;
+  }
+  nav a:hover {
+    text-decoration: underline;
   }
   #searchBar {
     padding: 10px;
     width: 300px;
     font-size: 16px;
     border-radius: 5px;
-    border: none;
+    border: 2px solid #0066cc; /* blue border */
     margin-bottom: 30px;
+    color: #003366;
   }
   .games-container {
     display: grid;
@@ -42,17 +46,19 @@
     justify-items: center;
   }
   .game {
-    background-color: #003366;
-    border: 2px solid #00aaff;
+    background-color: #e6f0ff; /* very light blue background */
+    border: 2px solid #0073e6; /* bright blue border */
     border-radius: 10px;
     padding: 15px;
     width: 250px;
     box-sizing: border-box;
     text-align: center;
+    color: #003366; /* dark blue text */
   }
   .game img {
     width: 100%;
     border-radius: 5px;
+    border: 1px solid #0073e6;
   }
   .game h2 {
     margin: 10px 0 5px 0;
@@ -61,16 +67,25 @@
   .game p {
     margin: 0 0 10px 0;
     font-weight: bold;
-    color: #a0cfff;
+    color: #0059b3; /* medium blue text */
   }
   .game button {
-    background-color: #00aaff;
-    color: black;
+    background-color: #0073e6; /* bright blue */
+    color: white;
     border: none;
     padding: 10px 20px;
     font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .game button:hover {
+    background-color: #005bb5; /* darker blue on hover */
+  }
+  p.no-games {
+    color: #004080;
+    font-weight: bold;
+    font-size: 1.2em;
   }
 </style>
 </head>
@@ -107,7 +122,7 @@
       } catch (e) {
         console.error('Failed to load games.json', e);
         document.getElementById('gameList').innerHTML =
-          '<p style="color: #f88;">Failed to load games.</p>';
+          '<p class="no-games">Failed to load games.</p>';
       }
     }
 
@@ -116,7 +131,7 @@
       container.innerHTML = '';
 
       if (!games.length) {
-        container.innerHTML = '<p>No games found.</p>';
+        container.innerHTML = '<p class="no-games">No games found.</p>';
         return;
       }
 
