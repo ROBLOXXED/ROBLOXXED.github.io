@@ -1,65 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ROBLOXXED - Home</title>
   <style>
     body {
       background-color: #001f3f;
       color: #ffffff;
       font-family: 'Segoe UI', sans-serif;
+      text-align: center;
       padding: 20px;
     }
-
-    nav {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
     nav a {
       color: #ffffff;
       margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
     }
-
     .logo {
-      display: block;
       max-width: 400px;
-      margin: 0 auto 20px;
+      margin-bottom: 20px;
     }
-
     #searchBar {
-      display: block;
-      margin: 0 auto 20px;
       padding: 10px;
       width: 300px;
       border-radius: 5px;
+      margin-bottom: 20px;
       border: none;
       font-size: 16px;
     }
-
     .games-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
     }
-
     .game {
-      background-color: #003366;
       border: 2px solid #00aaff;
-      border-radius: 10px;
       padding: 15px;
-      text-align: center;
+      border-radius: 10px;
+      width: 280px;
+      background-color: #003366;
     }
-
     .thumbnail {
       width: 100%;
       border-radius: 5px;
-      object-fit: cover;
     }
-
     button {
       background-color: #00aaff;
       color: black;
@@ -73,67 +58,20 @@
   </style>
 </head>
 <body>
-
   <img src="robloxxed_logo.png" alt="ROBLOXXED Logo" class="logo">
-
   <nav>
     <a href="index.html">Home</a>
-    <a href="recommended.html">Recommended</a>
-    <a href="charts.html">Charts</a>
-    <a href="others.html">Others</a>
+    <a href="charts.html?sortType=2">Charts</a>
+    <a href="charts.html?sortType=3">Top Earning</a>
+    <a href="charts.html?sortType=4">Up & Coming</a>
   </nav>
 
-  <input type="text" id="searchBar" placeholder="Search games..." oninput="searchGames()"/>
+  <input type="text" id="searchBar" placeholder="Search games...">
 
-  <div id="gameList" class="games-container">
+  <div class="games-container" id="gameList">
     <p>Loading games...</p>
   </div>
 
-  <script>
-    let allGames = [];
-
-    async function loadGames() {
-      const container = document.getElementById('gameList');
-      container.innerHTML = '<p>Loading games...</p>';
-
-      try {
-        const res = await fetch('/api/games');
-        const data = await res.json();
-
-        allGames = data.data || data.games || [];
-
-        displayGames(allGames);
-      } catch (e) {
-        container.innerHTML = '<p style="color:red">Failed to load games.</p>';
-        console.error(e);
-      }
-    }
-
-    function displayGames(games) {
-      const container = document.getElementById('gameList');
-      container.innerHTML = '';
-
-      games.forEach(game => {
-        const div = document.createElement('div');
-        div.className = 'game';
-        div.innerHTML = `
-          <img src="${game.thumbnailUrl || 'https://via.placeholder.com/480x270'}" class="thumbnail">
-          <h2>${game.name}</h2>
-          <p>By ${game.creatorName || 'Unknown'}</p>
-          <button onclick="location.href='roblox://placeId=${game.rootPlaceId || game.id}'">Play</button>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function searchGames() {
-      const input = document.getElementById('searchBar').value.toLowerCase();
-      const filtered = allGames.filter(game => game.name.toLowerCase().includes(input));
-      displayGames(filtered);
-    }
-
-    window.onload = loadGames;
-  </script>
-
+  <script src="games.js" defer></script>
 </body>
 </html>
